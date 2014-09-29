@@ -6,7 +6,8 @@ A Toolkit for Creating RESTful routes for express applications from swagger spec
 
 `npm install --save rest-spec-routing`
 
-in your express application `app.js
+in your express application `app.js`
+
 
 ```
 var express = require('express');
