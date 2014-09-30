@@ -1,6 +1,6 @@
 {
   "name": "rest-spec-routing",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Toolkit for Creating express routes from swagger specs",
   "main": "index.js",
   "scripts": {
