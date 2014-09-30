@@ -1,4 +1,4 @@
-var debug = require('debug')('rest-spect-routing');
+var debug = require('debug')('rest-spec-routing');
 var _ = require('lodash');
 var express =  require('express');
 var hooks = require('phased-hooks');
@@ -63,7 +63,7 @@ exports.useSpec = function(specType, options, dispatch){
 				}
 				else{
 					res.set(headers || {});
-					res.send(status, body);	
+					res.status(status).send(body);	
 				}
 			});
 		});
