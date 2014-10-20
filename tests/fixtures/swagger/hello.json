@@ -85,6 +85,36 @@
 							"required": true
 						}
 					]
+				},
+				{
+					"method": "POST",
+					"summary": "Say hello to a data from file",
+					"nickname": "helloPersonData",
+					"type": "string",
+					"responseMessages": [
+						{
+							"code": 403,
+							"message": "Access Denied"
+						},
+						{
+							"code": 400,
+							"message": "Invalid query",
+							"responseModel": "Error"
+						},
+						{
+							"code": 200,
+							"message": "Successful query"
+						}
+					],
+					"parameters":[
+						{
+							"name": "hellodata",
+							"type": "string",
+							"paramType": "file",
+							"description": "data for hello",
+							"required": true
+						}
+					]
 				}
 			]
 		},
