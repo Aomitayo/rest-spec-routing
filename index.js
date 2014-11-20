@@ -22,14 +22,21 @@ function hookDispatcher(hooks){
 				exdata = exdata || {};
 				var status = exdata.status || 200;
 				var headers = exdata.http;
-				cb(null, status, data, headers);
+				//var formatters
+				cb(null, status, data, headers, exdata.negotiate);
 			}
 		});
 	};
 }
-	
 
-exports.useSpec = function(specType, options, dispatch){
+exports.useSpec =
+exports.useSpecs = function(specType, options, dispatch){
+	var router = express.Router();
+	return exports.putSpecs(router, specType, options, dispatch);
+};
+
+exports.putSpec =
+exports.putSpecs = function(router, specType, options, dispatch){
 	var strategy = this.strategies[specType];
 	dispatch = dispatch || hookDispatcher(hooks);
 
@@ -37,7 +44,6 @@ exports.useSpec = function(specType, options, dispatch){
 		throw new Error( specType + ' is not a supported specification type');
 	}
 
-	var router = express.Router();
 	router.hooks = hooks;
 
 	strategy(options, function(verb, routePath, commandFn){
@@ -57,13 +63,34 @@ exports.useSpec = function(specType, options, dispatch){
 				return next(err);
 			}
 			
-			dispatch(command, function (err, status, body, headers){
+			dispatch(command, function (err, status, body, headers, negotiate){
 				if(err){
 					next(err);
 				}
 				else{
-					res.set(headers || {});
-					res.status(status).send(body);	
+					negotiate = _.extend({
+						'default': function(){
+							res.send(body);
+						}
+					}, _.mapValues(_.extend(req.negotiate || {}, negotiate||{}), function makeFormatter(f){
+						return function(){
+							if(typeof f === 'function'){
+								f(res, body, status, headers);
+							}
+							else{
+								return res.send(f);
+							}
+						};
+					}));
+
+					res.status(status).set(headers || {});
+
+					if(Object.keys(negotiate).length > 1 && req.headers.accept){
+						res.format(negotiate);
+					}
+					else{
+						negotiate.default();
+					}
 				}
 			});
 		});
